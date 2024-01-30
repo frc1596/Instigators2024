@@ -90,7 +90,7 @@ public class DriveCommand extends Command {
 
     double joystickMagnitude = Math.sqrt(
         (mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
-    if (joystickMagnitude > .1) {
+    if (joystickMagnitude > .2) {
         rotVel = mController.getRightX();
       //  rotVel = -rotationController.calculate(Rotation2d.fromDegrees(mSwerve.getRotation()).getRadians(),
       //     joystickAngle.getRadians());

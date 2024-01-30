@@ -33,23 +33,23 @@ import edu.wpi.first.wpilibj.SPI;
  * Basic simulation of a swerve subsystem with the methods needed by PathPlanner
  */
 public class SwerveSubsystem extends SubsystemBase {
-  private final CANSparkMax mDriveMotor1 = new CANSparkMax(2, MotorType.kBrushless);
-  private final CANSparkMax mDriveMotor2 = new CANSparkMax(1, MotorType.kBrushless);
-  private final CANSparkMax mDriveMotor3 = new CANSparkMax(3, MotorType.kBrushless);
-  private final CANSparkMax mDriveMotor4 = new CANSparkMax(5, MotorType.kBrushless);
+  private final CANSparkMax mDriveMotor1 = new CANSparkMax(1, MotorType.kBrushless);
+  private final CANSparkMax mDriveMotor2 = new CANSparkMax(3, MotorType.kBrushless);
+  private final CANSparkMax mDriveMotor3 = new CANSparkMax(5, MotorType.kBrushless);
+  private final CANSparkMax mDriveMotor4 = new CANSparkMax(7, MotorType.kBrushless);
 
-  private final CANSparkMax mAzimuth1 = new CANSparkMax(8, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth1 = new CANSparkMax(2, MotorType.kBrushless);
   private final CANSparkMax mAzimuth2 = new CANSparkMax(4, MotorType.kBrushless);
-  private final CANSparkMax mAzimuth3 = new CANSparkMax(7, MotorType.kBrushless);
-  private final CANSparkMax mAzimuth4 = new CANSparkMax(6, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth3 = new CANSparkMax(6, MotorType.kBrushless);
+  private final CANSparkMax mAzimuth4 = new CANSparkMax(8, MotorType.kBrushless);
                                                                       //assuming arm is forward
   private final CANcoder mAzimuthEncoder1 = new CANcoder(12); //12 is front right
-  private final CANcoder mAzimuthEncoder2 = new CANcoder(11); //11 is front left
-  private final CANcoder mAzimuthEncoder3 = new CANcoder(9);  //10 is back right
+  private final CANcoder mAzimuthEncoder2 = new CANcoder(9); //11 is front left
+  private final CANcoder mAzimuthEncoder3 = new CANcoder(11);  //10 is back right
   private final CANcoder mAzimuthEncoder4 = new CANcoder(10); //9 is back left
 
-  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.3031744, -0.3031744), "Module 1", mAzimuthEncoder1);
-  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.3031744, 0.3031744), "Module 2", mAzimuthEncoder2);
+  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.3031744, 0.3031744), "Module 1", mAzimuthEncoder1);
+  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.3031744, -0.3031744), "Module 2", mAzimuthEncoder2);
   private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.3031744, 0.3031744), "Module 3", mAzimuthEncoder3);
   private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.3031744,  -0.3031744), "Module 4", mAzimuthEncoder4);
 
@@ -65,7 +65,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem() {
     gyro.reset();
 
-    
     // kinematics = new SwerveDriveKinematics(
     //   Constants.Swerve.flModuleOffset, 
     //   Constants.Swerve.frModuleOffset, 

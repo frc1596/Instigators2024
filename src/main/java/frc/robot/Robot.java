@@ -7,8 +7,12 @@ package frc.robot;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.IntakePivotCommand;
+import frc.robot.commands.ShooterPivotCommand;
+import frc.robot.subsystems.IntakePivotSubsystem;
+import frc.robot.subsystems.ShooterPivotSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -28,7 +36,13 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private final SwerveSubsystem swerve = new SwerveSubsystem();
+  private final IntakePivotSubsystem intake = new IntakePivotSubsystem();
+  private final ShooterPivotSubsystem shooter = new ShooterPivotSubsystem();
   XboxController driverController = new XboxController(0);
+  XboxController operaterController = new XboxController(1);
+  private final Compressor mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
+  private final DoubleSolenoid m_doubleSolenoid =
+      new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
  // private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
 
@@ -39,6 +53,7 @@ public class Robot extends TimedRobot {
   SendableChooser<String> chooser = new SendableChooser<>();
   @Override
   public void robotInit() {
+   //new Compressor(null)
    // swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
   }
 
@@ -60,7 +75,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+
+  }
 
   @Override
   public void disabledPeriodic() {
@@ -91,8 +108,11 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-   swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
+    m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
 
+    swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
+    intake.setDefaultCommand(new IntakePivotCommand(intake, operaterController));
+    shooter.setDefaultCommand(new ShooterPivotCommand(shooter, operaterController));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -102,6 +122,12 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    if (driverController.getYButtonPressed()) {
+      m_doubleSolenoid.toggle();
+   }
+   if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 0.6)){
+      m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+   }
    // SmartDashboard.putNumber("Angle", gyro.getAngle());
 
   }
