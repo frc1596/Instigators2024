@@ -31,10 +31,11 @@ public class ShooterPivotCommand extends Command {
   @Override
   public void execute() {
     if(m_Controller.getYButton()){
-        m_subsystem.setAngle(180);
-    } else if(        m_Controller.getXButton() ){
-        m_subsystem.setAngle(0);
-    }
+      m_subsystem.setAngle(-120);
+  } else {
+     // m_subsystem.setAngle(-75);
+     m_subsystem.setAngle(0);
+  }
   }
 
   // Called once the command ends or is interrupted.

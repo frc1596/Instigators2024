@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -19,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakePivotCommand;
 import frc.robot.commands.ShooterPivotCommand;
@@ -50,9 +50,13 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  SendableChooser<String> chooser = new SendableChooser<>();
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
+  //private final SendableChooser<Command> autoChooser;
+
   @Override
   public void robotInit() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+
    //new Compressor(null)
    // swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
   }
@@ -70,6 +74,8 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     CommandScheduler.getInstance().run();
   }
 
@@ -84,6 +90,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("Gyro", gyro.getAngle());
   }
 
+  
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
@@ -150,8 +157,8 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {}
 
-  public Command getAutonomousCommand(){
-    return new PathPlannerAuto("New Auto");
-}
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
 }
 

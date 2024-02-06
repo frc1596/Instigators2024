@@ -73,6 +73,8 @@ public class SwerveDrive {
         mSwerveDrivePoseEstimator = new SwerveDrivePoseEstimator(mKinematics, Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, new Pose2d(), VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
 
         Arrays.stream(mModules).forEach(SwerveModule::init);
+
+        
     }
 
     public void setLocation(double x, double y, double angle){
