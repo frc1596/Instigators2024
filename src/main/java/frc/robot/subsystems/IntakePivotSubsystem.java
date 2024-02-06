@@ -25,14 +25,14 @@ public class IntakePivotSubsystem extends SubsystemBase {
 
   private final RelativeEncoder mIntakeEncoder;
     private final SparkPIDController mPivotPID;
-private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 10));
+private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(600, 300));
 private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
 private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
   public IntakePivotSubsystem() {
         // Configure drive motor controller parameters
         mPivotPID = mIntakePivot.getPIDController();
-        mPivotPID.setP(0.1);
+        mPivotPID.setP(0.3);
         mPivotPID.setI(0);
         mPivotPID.setD(0);
       
@@ -41,11 +41,16 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
         mIntakeEncoder.setPosition(0);
 
         mIntakePivot.setIdleMode(IdleMode.kBrake);
-        mIntakePivot.setSmartCurrentLimit(10);
+        mIntakePivot.setSmartCurrentLimit(30);
         mIntakePivot.setClosedLoopRampRate(0);
         mIntakePivot.setOpenLoopRampRate(.1);
         mIntakePivot.burnFlash();
 
+        mIntakeDrive.setIdleMode(IdleMode.kBrake);
+        mIntakeDrive.setSmartCurrentLimit(20);
+        mIntakeDrive.setClosedLoopRampRate(0);
+        mIntakeDrive.setOpenLoopRampRate(.1);
+        mIntakeDrive.burnFlash();
   }
 
 
@@ -59,9 +64,9 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
       // set angle of swerve drive
     public void setAngle(double angle) {
-        // mAzimuthPID.setReference(angle, ControlType.kPosition);
         m_goal = new TrapezoidProfile.State(angle, 0);
     }
+
     public void intake(double speed){
       mIntakeDrive.set(speed);
     }

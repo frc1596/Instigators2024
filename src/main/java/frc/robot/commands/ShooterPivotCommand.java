@@ -30,11 +30,16 @@ public class ShooterPivotCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_Controller.getYButton()){
-      m_subsystem.setAngle(-120);
-  } else {
-     // m_subsystem.setAngle(-75);
-     m_subsystem.setAngle(0);
+    if((m_Controller.getPOV() <= 315) && (m_Controller.getPOV() >= 225)){
+      m_subsystem.setAngle(-130);
+  } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)){
+    m_subsystem.setAngle(-65);
+    m_subsystem.shooterIntake(1);
+  }
+  else {
+     m_subsystem.setAngle(-15);
+     m_subsystem.shooterIntake(0);
+
   }
   }
 
