@@ -47,7 +47,7 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
         mIntakePivot.burnFlash();
 
         mIntakeDrive.setIdleMode(IdleMode.kBrake);
-        mIntakeDrive.setSmartCurrentLimit(20);
+        mIntakeDrive.setSmartCurrentLimit(30);
         mIntakeDrive.setClosedLoopRampRate(0);
         mIntakeDrive.setOpenLoopRampRate(.1);
         mIntakeDrive.burnFlash();
