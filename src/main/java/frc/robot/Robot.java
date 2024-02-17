@@ -8,6 +8,10 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,6 +28,8 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakePivotCommand;
 import frc.robot.commands.ShooterPivotCommand;
 import frc.robot.subsystems.IntakePivotSubsystem;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ShooterPivotSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -41,8 +47,11 @@ public class Robot extends TimedRobot {
   XboxController driverController = new XboxController(0);
   XboxController operaterController = new XboxController(1);
   private final Compressor mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
-  private final DoubleSolenoid m_doubleSolenoid =
-      new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  Limelight limelight = new Limelight();
+
+  LED led = new LED();
+
  // private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
 
@@ -52,11 +61,16 @@ public class Robot extends TimedRobot {
    */
   SendableChooser<Command> autoChooser = new SendableChooser<>();
   //private final SendableChooser<Command> autoChooser;
+private AddressableLED m_led;
+private AddressableLEDBuffer m_ledBuffer;
 
   @Override
   public void robotInit() {
         autoChooser = AutoBuilder.buildAutoChooser();
-
+     UsbCamera camera = CameraServer.startAutomaticCapture();
+    camera.setResolution(160,120);
+    
+    //camera.setFPS(24);
    //new Compressor(null)
    // swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
   }
@@ -82,12 +96,14 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-
+    led.isEnabled = false;
+    //led.setLEDGreen();
   }
 
   @Override
   public void disabledPeriodic() {
-    //SmartDashboard.putNumber("Gyro", gyro.getAngle());
+    SmartDashboard.putNumber("FID",  limelight.getFid());
+
   }
 
   
@@ -114,10 +130,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
+    led.isEnabled = true;
+   // led.setLEDOrange();
     m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
-
-    swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
+    swerve.setDefaultCommand(new DriveCommand(swerve, driverController, operaterController,limelight));
     intake.setDefaultCommand(new IntakePivotCommand(intake, operaterController));
     shooter.setDefaultCommand(new ShooterPivotCommand(shooter, operaterController));
     if (m_autonomousCommand != null) {
@@ -128,15 +144,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("FID",  limelight.getFid());
 
     if (driverController.getYButtonPressed()) {
       m_doubleSolenoid.toggle();
    }
-   if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 0.6)){
-      m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
-   }
+  // if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 0.6)){
+  //    m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+   //}
    // SmartDashboard.putNumber("Angle", gyro.getAngle());
-
+ 
   }
 
   @Override

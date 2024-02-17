@@ -127,6 +127,22 @@ public class SwerveDrive {
         }
     }
 
+    public void drivePathplanner(ChassisSpeeds wowChassisSpeeds){
+
+        SwerveModuleState[] states = mKinematics.toSwerveModuleStates(wowChassisSpeeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
+        for (int i = 0; i < numModules; i++){
+            mModules[i].set(states[i]);
+        }
+    }
+
+    public void resetPosePathplanner(Pose2d spin){
+        SwerveModulePosition[] states = new SwerveModulePosition[numModules];
+        for (int i = 0; i < numModules; i++) {
+            states[i] = mModules[i].getPosition();
+        }
+        mSwerveDrivePoseEstimator.resetPosition(spin.getRotation(), states, getPose());
+    }
     public void driveClosedLoop(double forward, double strafe, double azimuth, boolean fieldRelative){
         ChassisSpeeds speeds;
         if (fieldRelative){

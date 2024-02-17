@@ -70,8 +70,8 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setSmartCurrentLimit(40, 60, 100); 
 
         // Configure Drive Encoder
-        mDriveEncoder.setPositionConversionFactor(0.2393893602 / ((18.0*45.0)/(12.0*15.0)));
-        mDriveEncoder.setVelocityConversionFactor(((0.2393893602 / ((18.0 / 12.0) * (45.0 / 15.0))) / 60));
+        mDriveEncoder.setPositionConversionFactor(1.0/6.12); //1/6.12
+        mDriveEncoder.setVelocityConversionFactor((6.12 / 60));
         mDriveEncoder.setPosition(0);
 
         // Configure azimuth motor controller parameters
@@ -87,7 +87,7 @@ public class SwerveModuleV3 implements SwerveModule {
         //mAzimuthAbsoluteEncoder.setAverageDepth(1);
         
         // Configure azimuth incremental encoder
-        mAzimuthIncrementalEncoder.setPositionConversionFactor(150.0/7.0);
+        mAzimuthIncrementalEncoder.setPositionConversionFactor(150.0/7.0); //derek Maybe fix this
         // Configure drive PID
         mDrivePID.setFF(.3);
         mDrivePID.setP(.1);

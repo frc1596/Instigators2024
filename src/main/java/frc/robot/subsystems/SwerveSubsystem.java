@@ -52,10 +52,10 @@ public class SwerveSubsystem extends SubsystemBase {
   private final CANcoder mAzimuthEncoder3 = new CANcoder(11);  //10 is back right
   private final CANcoder mAzimuthEncoder4 = new CANcoder(10); //9 is back left
 
-  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.3031744, 0.3031744), "Module 1", mAzimuthEncoder1);
-  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.3031744, -0.3031744), "Module 2", mAzimuthEncoder2);
-  private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.3031744, 0.3031744), "Module 3", mAzimuthEncoder3);
-  private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.3031744,  -0.3031744), "Module 4", mAzimuthEncoder4);
+  private final SwerveModuleV3 Module1 = new SwerveModuleV3(mAzimuth1, mDriveMotor1, new Translation2d(0.34925, 0.269875), "Module 1", mAzimuthEncoder1);
+  private final SwerveModuleV3 Module2 = new SwerveModuleV3(mAzimuth2, mDriveMotor2, new Translation2d(0.34925, -0.269875), "Module 2", mAzimuthEncoder2);
+  private final SwerveModuleV3 Module3 = new SwerveModuleV3(mAzimuth3, mDriveMotor3, new Translation2d(-0.34925, 0.269875), "Module 3", mAzimuthEncoder3);
+  private final SwerveModuleV3 Module4 = new SwerveModuleV3(mAzimuth4, mDriveMotor4, new Translation2d(-0.34925,  -0.269875), "Module 4", mAzimuthEncoder4);
 
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
@@ -72,15 +72,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(
-            this::getPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            mSwerveDrive::getPose, // Robot pose supplier
+            mSwerveDrive::resetPosePathplanner, // Method to reset odometry (will be called if your auto has a starting pose)
+            mSwerveDrive::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            mSwerveDrive::drivePathplanner, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
-                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(2.0, 0.0, 0.0), // Rotation PID constants
+                    5.059, // Max module speed, in m/s
+                    0.45, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
             () -> {
@@ -176,6 +176,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     for (int i = 0; i < modules.length; i++) {
       modules[i].setTargetState(targetStates[i]);
+      
     }
   }
 

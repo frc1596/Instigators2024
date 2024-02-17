@@ -34,7 +34,7 @@ public class IntakePivotCommand extends Command {
   @Override
   public void execute() {
     if(m_Controller.getAButton()){
-        m_subsystem.setAngle(76);
+        m_subsystem.setAngle(76.8);
         m_subsystem.intake(-0.6);
     } else {
         m_subsystem.setAngle(10);
@@ -42,7 +42,7 @@ public class IntakePivotCommand extends Command {
     }
 
     if(m_Controller.getXButton()){
-      m_subsystem.intake(0.8);
+      m_subsystem.intake(0.5);
     }
 
   }
