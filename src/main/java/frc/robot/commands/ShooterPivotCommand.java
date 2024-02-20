@@ -34,7 +34,9 @@ public class ShooterPivotCommand extends Command {
       m_subsystem.setAngle(-0.4); //-0.4
   } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)){
     m_subsystem.setAngle(-0.18); //-0.2
-    m_subsystem.shooterIntake(0.4);
+    if(!m_subsystem.getSensor()){
+      m_subsystem.shooterIntake(0.4);
+    }
   }else if(m_Controller.getPOV() == 0){
         m_subsystem.setAngle(-0.21); //-0.28
   }
@@ -55,12 +57,16 @@ public class ShooterPivotCommand extends Command {
         }
   } else{
     m_subsystem.shooterShootStop();
+    if(m_subsystem.getSensor()){
+      m_subsystem.shooterIntake(-0.2);
+   }
   }
 
   if(m_Controller.getYButton()){
     m_subsystem.shooterIntake(0.5);
   }
   
+
 
   }
 

@@ -13,10 +13,14 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakePivotSubsystem extends SubsystemBase {
+  
+  private final DigitalInput noteSensor = new DigitalInput(0);
+
   private static double kDt = 0.02; //some sort of timing thing, don't touch probably
 
   /** Creates a new ExampleSubsystem. */
@@ -60,6 +64,7 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     // This method will be called once per scheduler run
     m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
     mPivotPID.setReference(m_setpoint.position, com.revrobotics.CANSparkBase.ControlType.kPosition);
+
   }
 
       // set angle of swerve drive
@@ -71,4 +76,7 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
       mIntakeDrive.set(speed);
     }
 
+    public boolean getSensor(){
+      return(noteSensor.get());
+    }
 }

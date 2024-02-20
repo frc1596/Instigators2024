@@ -33,7 +33,7 @@ public class IntakePivotCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_Controller.getAButton()){
+    if((m_Controller.getAButton()) && (!m_subsystem.getSensor())){
         m_subsystem.setAngle(76.8);
         m_subsystem.intake(-0.6);
     } else {
@@ -44,6 +44,7 @@ public class IntakePivotCommand extends Command {
     if(m_Controller.getXButton()){
       m_subsystem.intake(0.5);
     }
+
 
   }
 

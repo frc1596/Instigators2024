@@ -11,15 +11,18 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterPivotSubsystem extends SubsystemBase {
+
+  private final DigitalInput noteSensor = new DigitalInput(1);
+
   private static double kDt = 0.02; //some sort of timing thing, don't touch probably
 
-  /** Creates a new ExampleSubsystem. */
  private final CANSparkMax mShooterPivot = new CANSparkMax(15, MotorType.kBrushless);
  private final CANSparkMax mShooterIntake1 = new CANSparkMax(16, MotorType.kBrushless);
   private final CANSparkMax mShooterIntake2 = new CANSparkMax(17, MotorType.kBrushless);
@@ -130,4 +133,8 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     public void shooterShootStop() {
         mShooter1.stopMotor();;
       }
+
+    public boolean getSensor(){
+      return(noteSensor.get());
+    }
 }
