@@ -37,9 +37,9 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     if (isEnabled == false) {
-     // rainbow();
+      //rainbow();
      //setLedFade();
-         for (var i = 0; i < m_ledBuffer0.getLength(); i++) {
+         for (var i = 0; i < m_ledBuffer0.getLength(); i = i + 2) {
         m_ledBuffer0.setRGB(i, 0, 0, 255);
          }
       m_led0.setData(m_ledBuffer0);
@@ -56,7 +56,7 @@ public class LED extends SubsystemBase {
 
   private void rainbow() {
     // For every pixel
-    for (var i = 0; i < m_ledBuffer0.getLength(); i++) {
+    for (var i = 0; i < m_ledBuffer0.getLength(); i = i + 9) {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to precess
       final var hue = (m_rainbowFirstPixelHue + (i * 180 / m_ledBuffer0.getLength())) % 180;

@@ -31,36 +31,48 @@ public class ShooterPivotCommand extends Command {
   @Override
   public void execute() {
     if((m_Controller.getPOV() <= 315) && (m_Controller.getPOV() >= 225)){
-      m_subsystem.setAngle(-0.4); //-0.4
-  } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)){
+      m_subsystem.setAngle(-0.35); //-0.4
+  } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45) && !m_subsystem.getSensor()){
     m_subsystem.setAngle(-0.18); //-0.2
-    if(!m_subsystem.getSensor()){
-      m_subsystem.shooterIntake(0.4);
+    m_subsystem.shooterIntake(.4);
+  }
+    else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45) && m_subsystem.getSensor()){
+        m_subsystem.shooterIntake(-0.1);
+            m_subsystem.shooterShoot(0.5);
+            m_subsystem.setAngle(-0.18); //-0.2
+
     }
-  }else if(m_Controller.getPOV() == 0){
+    else if((!((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)) && m_subsystem.getSensor())){
+        m_subsystem.shooterIntake(-0.1);
+        m_subsystem.shooterShoot(0.5);
+    }
+  else if(m_Controller.getPOV() == 0){
         m_subsystem.setAngle(-0.21); //-0.28
+        m_subsystem.shooterIntake(0);
+        m_subsystem.shooterShootStop();
   }
   else {
      m_subsystem.setAngle(-0.05); //-0.05
      m_subsystem.shooterIntake(0);
+     m_subsystem.shooterShootStop();
   }
 
   if(m_Controller.getLeftTriggerAxis() > 0.1){
-    m_subsystem.shooterShoot(500);
-        
-
+    m_subsystem.shooterShoot(5);
     
   }else if(m_Controller.getRightTriggerAxis() > 0.1){
-    m_subsystem.shooterShoot(-500);
-    if(m_subsystem.getShooterVelocity() < -4.5){
+    m_subsystem.shooterShoot(-5);
+    if(m_subsystem.getShooterVelocity() < -3.8){
           m_subsystem.shooterIntake(0.4);
         }
-  } else{
-    m_subsystem.shooterShootStop();
-    if(m_subsystem.getSensor()){
-      m_subsystem.shooterIntake(-0.2);
    }
-  }
+   
+   // else{
+  //   m_subsystem.shooterShootStop();
+  //   if(m_subsystem.getSensor()){
+  //     m_subsystem.shooterIntake(-0.2);
+  //  }
+  // }
 
   if(m_Controller.getYButton()){
     m_subsystem.shooterIntake(0.5);
