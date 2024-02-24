@@ -10,6 +10,9 @@ import com.revrobotics.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,8 +41,36 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
   private static final SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   private static final int kCPR = 8192;
   private RelativeEncoder m_alternateEncoder;
+ 
+
+  private static Interpolator wow; 
+  private static InverseInterpolator wow2;
+  private static Double outputSpeed;
+  private static InterpolatingTreeMap<Double, Double> kDistanceToShooterSpeed = new InterpolatingTreeMap<Double, Double>(wow2, wow);
+
+  // static {
+  //     kDistanceToShooterSpeed.put( (0.0),(1000.0));
+  //     kDistanceToShooterSpeed.put((76.0), (2400.0));
+  //     kDistanceToShooterSpeed.put((100.0), (2800.0));
+  //     kDistanceToShooterSpeed.put((130.0), (3500.0));
+  //     kDistanceToShooterSpeed.put((160.0), (3700.0));
+  //     kDistanceToShooterSpeed.put((190.0), (3800.0));
+  //     kDistanceToShooterSpeed.put((240.0), (3900.0));
+  //     kDistanceToShooterSpeed.put((300.0), (4000.0));
+  // }
+  
+  
 
   public ShooterPivotSubsystem() {
+          kDistanceToShooterSpeed.put( (0.0),(1000.0));
+      kDistanceToShooterSpeed.put((76.0), (2400.0));
+      kDistanceToShooterSpeed.put((100.0), (2800.0));
+      kDistanceToShooterSpeed.put((130.0), (3500.0));
+      kDistanceToShooterSpeed.put((160.0), (3700.0));
+      kDistanceToShooterSpeed.put((190.0), (3800.0));
+      kDistanceToShooterSpeed.put((240.0), (3900.0));
+      kDistanceToShooterSpeed.put((300.0), (4000.0));
+
     m_alternateEncoder = mShooterPivot.getAlternateEncoder(kAltEncType, kCPR);
     m_alternateEncoder.setInverted(true);
     m_alternateEncoder.setPosition(0);
@@ -54,6 +85,7 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
         //mPivotPID.getSmartMotionAccelStrategy
         mShooterPivot.setIdleMode(IdleMode.kBrake);
         mShooterPivot.setSmartCurrentLimit(30);
+        
         // mShooterEncoder = mShooterPivot.getEncoder();
          mShooterPivot.setClosedLoopRampRate(0);
          mShooterPivot.setOpenLoopRampRate(.1);
@@ -63,13 +95,13 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
 
          mShooterIntake1.setIdleMode(IdleMode.kBrake);
-         mShooterIntake1.setSmartCurrentLimit(30);
+         mShooterIntake1.setSmartCurrentLimit(40);
          mShooterIntake1.setClosedLoopRampRate(0);
          mShooterIntake1.setOpenLoopRampRate(.1);
          mShooterIntake1.burnFlash();
 
          mShooterIntake2.setIdleMode(IdleMode.kBrake);
-         mShooterIntake2.setSmartCurrentLimit(30);
+         mShooterIntake2.setSmartCurrentLimit(40);
          mShooterIntake2.setClosedLoopRampRate(0);
          mShooterIntake2.setOpenLoopRampRate(.1);
          mShooterIntake2.burnFlash();
@@ -83,9 +115,9 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
           mShooterPID = mShooter1.getPIDController();
 
           mShooterPID.setSmartMotionMaxVelocity(6000, 0);
-          mShooterPID.setSmartMotionMinOutputVelocity(1, 0);
-          mShooterPID.setSmartMotionMaxAccel(10, 0);
-          mShooterPID.setSmartMotionAllowedClosedLoopError(5, 0);
+          mShooterPID.setSmartMotionMinOutputVelocity(-6000, 0);
+          mShooterPID.setSmartMotionMaxAccel(1000, 0);
+          mShooterPID.setSmartMotionAllowedClosedLoopError(0.1, 0);
       
          mShooter2.follow(mShooter1, true);
         // mShooter2.setInverted(true);
@@ -101,8 +133,10 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     // This method will be called once per scheduler run
         m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
         mPivotPID.setReference(m_setpoint.position, com.revrobotics.CANSparkBase.ControlType.kPosition);
-      
-     if (DriverStation.isDisabled()){
+      // outputSpeed = kDistanceToShooterSpeed.get(5.5);
+       // SmartDashboard.putNumber("Distance", kDistanceToShooterSpeed.get(5.5));
+       
+      if (DriverStation.isDisabled()){
       //elbowSetpoint = new State(getElbowPostition(), 0);
       //shoulderSetpoint = new State(getShoulderPostition(), 0);
       //elbowGoal = elbowSetpoint;

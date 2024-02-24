@@ -77,6 +77,17 @@ public class SwerveDrive {
         
     }
 
+    public void periodic(){
+        SwerveModulePosition[] states = new SwerveModulePosition[numModules];
+        for (int i = 0; i < numModules; i++) {
+            states[i] = mModules[i].getPosition();
+        }
+        mSwerveDrivePoseEstimator.update(Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states);
+    }
+
+
+
+
     public void setLocation(double x, double y, double angle){
         Pose2d newPose = new Pose2d(x, y, Rotation2d.fromDegrees(angle));
         SwerveModulePosition[] states = new SwerveModulePosition[numModules];
@@ -128,8 +139,9 @@ public class SwerveDrive {
     }
 
     public void drivePathplanner(ChassisSpeeds wowChassisSpeeds){
-
-        SwerveModuleState[] states = mKinematics.toSwerveModuleStates(wowChassisSpeeds);
+        //the below line inverts the rotation for the autonomous, cause it was backwards
+        ChassisSpeeds wow2ChassisSpeeds = new ChassisSpeeds(wowChassisSpeeds.vxMetersPerSecond,wowChassisSpeeds.vyMetersPerSecond,-wowChassisSpeeds.omegaRadiansPerSecond);
+        SwerveModuleState[] states = mKinematics.toSwerveModuleStates(wow2ChassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
         for (int i = 0; i < numModules; i++){
             mModules[i].set(states[i]);
@@ -141,8 +153,9 @@ public class SwerveDrive {
         for (int i = 0; i < numModules; i++) {
             states[i] = mModules[i].getPosition();
         }
-        mSwerveDrivePoseEstimator.resetPosition(spin.getRotation(), states, getPose());
+        mSwerveDrivePoseEstimator.resetPosition(spin.getRotation(), states, spin);
     }
+    
     public void driveClosedLoop(double forward, double strafe, double azimuth, boolean fieldRelative){
         ChassisSpeeds speeds;
         if (fieldRelative){

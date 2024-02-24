@@ -77,10 +77,10 @@ public class SwerveSubsystem extends SubsystemBase {
             mSwerveDrive::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             mSwerveDrive::drivePathplanner, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(2.0, 0.0, 0.0), // Rotation PID constants
+                    new PIDConstants(4, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.5, 0.0, 0.0), // Rotation PID constants
                     5.059, // Max module speed, in m/s
-                    0.45, // Drive base radius in meters. Distance from robot center to furthest module.
+                    0.4572, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
             () -> {
@@ -102,6 +102,11 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
    // odometry.update(gyro.getRotation2d(), getPositions());
    // mSwerveDrive.updateOdometry();
+SmartDashboard.putNumber("RobotXSpeed", mSwerveDrive.getChassisSpeeds().vxMetersPerSecond);
+SmartDashboard.putNumber("RobotYSpeed", mSwerveDrive.getChassisSpeeds().vyMetersPerSecond);
+SmartDashboard.putNumber("RobotXPos", mSwerveDrive.getPose().getX());
+SmartDashboard.putNumber("RobotYPos", mSwerveDrive.getPose().getY());
+mSwerveDrive.periodic(); 
 
   }
   public void drive(double forward, double strafe, double azimuth, boolean fieldRelative){
@@ -130,7 +135,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   
     public void setLocation(double x, double y, double angle){
-    //  mSwerveDrive.setLocation(x, y, angle);
+      mSwerveDrive.setLocation(x, y, angle);
     }
 
   

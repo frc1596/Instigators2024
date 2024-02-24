@@ -69,7 +69,7 @@ private AddressableLEDBuffer m_ledBuffer;
         autoChooser = AutoBuilder.buildAutoChooser();
      UsbCamera camera = CameraServer.startAutomaticCapture();
     camera.setResolution(160,120);
-    
+
     //camera.setFPS(24);
    //new Compressor(null)
    // swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
@@ -89,6 +89,7 @@ private AddressableLEDBuffer m_ledBuffer;
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putString("Selected Auto:" , autoChooser.getSelected().getName());
 
     CommandScheduler.getInstance().run();
   }
@@ -113,7 +114,7 @@ private AddressableLEDBuffer m_ledBuffer;
 
     m_autonomousCommand = getAutonomousCommand();
 
-    
+   // swerve.setLocation(0,0,0);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -128,7 +129,7 @@ private AddressableLEDBuffer m_ledBuffer;
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
+    // continue until interrupted by another command, remove` 
     // this line or comment it out.
     led.isEnabled = true;
    // led.setLEDOrange();
@@ -175,6 +176,10 @@ private AddressableLEDBuffer m_ledBuffer;
   public void simulationPeriodic() {}
 
   public Command getAutonomousCommand() {
+    if(autoChooser.getSelected().getName() == "Wow Auto"){
+      swerve.setLocation(2, 7, 0);
+    }
+
     return autoChooser.getSelected();
   }
 }

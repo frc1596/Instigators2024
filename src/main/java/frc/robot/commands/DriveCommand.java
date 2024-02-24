@@ -22,7 +22,7 @@ public class DriveCommand extends Command {
 
     private PIDController limController = new PIDController(0.3, 0.0, 0.0);
 
-    private PIDController autoAimController = new PIDController(3.0,0,0);
+    private PIDController autoAimController = new PIDController(1.0,0,0);
 
     private JoystickHelper xHelper = new JoystickHelper(0);
   private JoystickHelper yHelper = new JoystickHelper(0);
@@ -92,7 +92,6 @@ public class DriveCommand extends Command {
       mController.setRumble(RumbleType.kRightRumble, 0);
     }
 
-
     yVel = yHelper.setInput(yVel).applyPower(2).value;
     xVel = xHelper.setInput(xVel).applyPower(2).value;
     rotVel = rotHelper.setInput(rotVel).applyPower(2).value;
@@ -113,9 +112,9 @@ public class DriveCommand extends Command {
     double joystickMagnitude = Math.sqrt(
         (mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
   
-    if(mController2.getPOV() == 0){
+    if(mController2.getLeftBumper() && !(mLimelight.getFid() == -1)){
       if((mLimelight.getFid() == 3) || (mLimelight.getFid() == 4)){
-        rotVel = -autoAimController.calculate(mLimelight.getPose().getRotation().getRotations(), 0.5);
+        rotVel = -autoAimController.calculate(mLimelight.getPose().getRotation().getRotations(), 0);
         SmartDashboard.putNumber("RotVel",rotVel);
       } else if(mLimelight.getFid() == 5){
         rotVel = -autoAimController.calculate(mLimelight.getPose().getRotation().getRotations(), 0.25);
@@ -138,6 +137,8 @@ public class DriveCommand extends Command {
     }
     lastScan = mController.getRawButton(7);
 
+    SmartDashboard.putNumber("Commanded xVel", xVel);
+        SmartDashboard.putNumber("Commanded yVel", yVel);
 
     boolean fieldRelative = !mController.getAButton();
 //ChassisSpeeds regularDrive = ChassisSpeeds.fromFieldRelativeSpeeds(xrVel, yrVel, joystickMagnitude, joystickAngle);

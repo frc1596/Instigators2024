@@ -39,8 +39,8 @@ public class LED extends SubsystemBase {
     if (isEnabled == false) {
       //rainbow();
      //setLedFade();
-         for (var i = 0; i < m_ledBuffer0.getLength(); i = i + 2) {
-        m_ledBuffer0.setRGB(i, 0, 0, 255);
+         for (var i = 0; i < m_ledBuffer0.getLength(); i = i + 3) {
+        m_ledBuffer0.setRGB(i, 0, 0, 0);
          }
       m_led0.setData(m_ledBuffer0);
     } else{

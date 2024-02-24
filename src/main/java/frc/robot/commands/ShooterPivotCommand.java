@@ -11,6 +11,8 @@ public class ShooterPivotCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ShooterPivotSubsystem m_subsystem;
   private final XboxController m_Controller;
+  private int shootState = 1;
+
   /**
    * Creates a new ExampleCommand.
    *
@@ -32,21 +34,11 @@ public class ShooterPivotCommand extends Command {
   public void execute() {
     if((m_Controller.getPOV() <= 315) && (m_Controller.getPOV() >= 225)){
       m_subsystem.setAngle(-0.35); //-0.4
-  } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45) && !m_subsystem.getSensor()){
+  } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)){
     m_subsystem.setAngle(-0.18); //-0.2
     m_subsystem.shooterIntake(.4);
   }
-    else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45) && m_subsystem.getSensor()){
-        m_subsystem.shooterIntake(-0.1);
-            m_subsystem.shooterShoot(0.5);
-            m_subsystem.setAngle(-0.18); //-0.2
-
-    }
-    else if((!((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)) && m_subsystem.getSensor())){
-        m_subsystem.shooterIntake(-0.1);
-        m_subsystem.shooterShoot(0.5);
-    }
-  else if(m_Controller.getPOV() == 0){
+  else if(m_Controller.getLeftBumper()){
         m_subsystem.setAngle(-0.21); //-0.28
         m_subsystem.shooterIntake(0);
         m_subsystem.shooterShootStop();
@@ -61,10 +53,32 @@ public class ShooterPivotCommand extends Command {
     m_subsystem.shooterShoot(5);
     
   }else if(m_Controller.getRightTriggerAxis() > 0.1){
-    m_subsystem.shooterShoot(-5);
-    if(m_subsystem.getShooterVelocity() < -3.8){
-          m_subsystem.shooterIntake(0.4);
+
+   }
+
+   if(shootState == 1){
+    if(m_Controller.getRightTriggerAxis() > 0.1){
+      shootState = 2;
+    }
+   } else if(shootState == 2){
+        m_subsystem.shooterIntake(-0.1);
+        m_subsystem.shooterShoot(0.5);
+      if(!m_subsystem.getSensor()){
+        shootState = 3;
+      }
+      if(!(m_Controller.getRightTriggerAxis() > 0.1)){
+          shootState = 1;
+      }
+   } else if( shootState == 3){
+    
+    m_subsystem.shooterShoot(-50);
+    if(m_subsystem.getShooterVelocity() < -40.5){
+          m_subsystem.shooterIntake(1);
         }
+
+     if(!(m_Controller.getRightTriggerAxis() > 0.1)){
+        shootState = 1;
+     }
    }
    
    // else{
