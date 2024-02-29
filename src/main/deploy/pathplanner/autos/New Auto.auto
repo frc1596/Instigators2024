@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle to left note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left to right note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid 1 note"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

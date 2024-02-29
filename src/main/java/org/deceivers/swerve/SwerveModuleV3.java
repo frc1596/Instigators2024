@@ -64,7 +64,7 @@ public class SwerveModuleV3 implements SwerveModule {
         mDriveMotor.setInverted(true);
         mDriveMotor.setClosedLoopRampRate(0);
         mDriveMotor.setOpenLoopRampRate(.1);
-        mDriveMotor.setIdleMode(IdleMode.kCoast);
+        mDriveMotor.setIdleMode(IdleMode.kBrake);
 
         //If rpm is lower than limitRPM, the stall limit will be used, otherwise the free limit will be used
         mDriveMotor.setSmartCurrentLimit(40, 60, 100); 

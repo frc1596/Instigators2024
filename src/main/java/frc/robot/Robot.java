@@ -136,7 +136,7 @@ private AddressableLEDBuffer m_ledBuffer;
     m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     swerve.setDefaultCommand(new DriveCommand(swerve, driverController, operaterController,limelight));
     intake.setDefaultCommand(new IntakePivotCommand(intake, operaterController));
-    shooter.setDefaultCommand(new ShooterPivotCommand(shooter, operaterController));
+    shooter.setDefaultCommand(new ShooterPivotCommand(shooter, operaterController, limelight));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

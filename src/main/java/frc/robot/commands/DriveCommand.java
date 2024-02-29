@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.deceivers.drivers.LimelightHelpers;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,11 +29,12 @@ public class DriveCommand extends Command {
     private JoystickHelper xHelper = new JoystickHelper(0);
   private JoystickHelper yHelper = new JoystickHelper(0);
   private JoystickHelper rotHelper = new JoystickHelper(0);
-  private JoystickHelper xrHelper = new JoystickHelper(0);
-  private JoystickHelper yrHelper = new JoystickHelper(0);
+
     private SlewRateLimiter xfilter = new SlewRateLimiter(3);
     private SlewRateLimiter yfilter = new SlewRateLimiter(3);
-    private SlewRateLimiter rotfilter = new SlewRateLimiter(3);
+
+    private PIDController shooterAimPID = new PIDController(0.01, 0, 0);
+
     private boolean lastScan;
     private double driveFactor = 1;
 
@@ -58,12 +61,9 @@ public class DriveCommand extends Command {
     double xVel = 0;
     double yVel = 0;
     double rotVel = 0;
-    double xrVel = 0;
-    double yrVel = 0;
     double driveDirection = 0;
     double driveMagnitude = 0;
 
-    
     yVel = mController.getLeftY();
     xVel = mController.getLeftX();
 
@@ -114,10 +114,9 @@ public class DriveCommand extends Command {
   
     if(mController2.getLeftBumper() && !(mLimelight.getFid() == -1)){
       if((mLimelight.getFid() == 3) || (mLimelight.getFid() == 4)){
-        rotVel = -autoAimController.calculate(mLimelight.getPose().getRotation().getRotations(), 0);
-        SmartDashboard.putNumber("RotVel",rotVel);
-      } else if(mLimelight.getFid() == 5){
-        rotVel = -autoAimController.calculate(mLimelight.getPose().getRotation().getRotations(), 0.25);
+      //  rotVel = -autoAimController.calculate(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle()-Math.toRadians(mSwerve.getRotation()), 0);
+      //  SmartDashboard.putNumber("RotVel",rotVel);
+      //  SmartDashboard.putNumber("LimelightRotation",LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle());
       }
     }
     else if (joystickMagnitude > .04) {

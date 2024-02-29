@@ -34,7 +34,7 @@ public class ShooterPivotSubsystem extends SubsystemBase {
  // private final RelativeEncoder mShooterEncoder;
     private final SparkPIDController mPivotPID;
     private final SparkPIDController mShooterPID;
-private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10, 1));
+private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(9, 3));
 private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
 private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
@@ -43,40 +43,16 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
   private RelativeEncoder m_alternateEncoder;
  
 
-  private static Interpolator wow; 
-  private static InverseInterpolator wow2;
-  private static Double outputSpeed;
-  private static InterpolatingTreeMap<Double, Double> kDistanceToShooterSpeed = new InterpolatingTreeMap<Double, Double>(wow2, wow);
-
-  // static {
-  //     kDistanceToShooterSpeed.put( (0.0),(1000.0));
-  //     kDistanceToShooterSpeed.put((76.0), (2400.0));
-  //     kDistanceToShooterSpeed.put((100.0), (2800.0));
-  //     kDistanceToShooterSpeed.put((130.0), (3500.0));
-  //     kDistanceToShooterSpeed.put((160.0), (3700.0));
-  //     kDistanceToShooterSpeed.put((190.0), (3800.0));
-  //     kDistanceToShooterSpeed.put((240.0), (3900.0));
-  //     kDistanceToShooterSpeed.put((300.0), (4000.0));
-  // }
-  
   
 
   public ShooterPivotSubsystem() {
-          kDistanceToShooterSpeed.put( (0.0),(1000.0));
-      kDistanceToShooterSpeed.put((76.0), (2400.0));
-      kDistanceToShooterSpeed.put((100.0), (2800.0));
-      kDistanceToShooterSpeed.put((130.0), (3500.0));
-      kDistanceToShooterSpeed.put((160.0), (3700.0));
-      kDistanceToShooterSpeed.put((190.0), (3800.0));
-      kDistanceToShooterSpeed.put((240.0), (3900.0));
-      kDistanceToShooterSpeed.put((300.0), (4000.0));
 
     m_alternateEncoder = mShooterPivot.getAlternateEncoder(kAltEncType, kCPR);
     m_alternateEncoder.setInverted(true);
     m_alternateEncoder.setPosition(0);
         // Configure drive motor controller parameters
         mPivotPID = mShooterPivot.getPIDController();
-        mPivotPID.setP(2);
+        mPivotPID.setP(3);
         mPivotPID.setI(0);
         mPivotPID.setD(0);
        // mPivotPID.setFF(0.1);
@@ -117,7 +93,7 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
           mShooterPID.setSmartMotionMaxVelocity(6000, 0);
           mShooterPID.setSmartMotionMinOutputVelocity(-6000, 0);
           mShooterPID.setSmartMotionMaxAccel(1000, 0);
-          mShooterPID.setSmartMotionAllowedClosedLoopError(0.1, 0);
+          mShooterPID.setSmartMotionAllowedClosedLoopError(0.01, 0);
       
          mShooter2.follow(mShooter1, true);
         // mShooter2.setInverted(true);
@@ -149,7 +125,9 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     public void setAngle(double angle) {
         m_goal = new TrapezoidProfile.State(angle, 0);
     }
-
+    public double getAngle(){
+      return(m_alternateEncoder.getPosition());
+    }
     public void shooterIntake(double speed) {
       mShooterIntake1.set(speed);
       mShooterIntake2.set(speed);

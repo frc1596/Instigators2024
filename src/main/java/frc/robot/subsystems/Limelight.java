@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import org.deceivers.drivers.LimelightHelpers;
+import org.deceivers.drivers.LimelightHelpers.LimelightResults;
+import org.deceivers.drivers.LimelightHelpers.LimelightTarget_Fiducial;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;

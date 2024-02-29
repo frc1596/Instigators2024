@@ -1,5 +1,4 @@
-//LimelightHelpers v1.0 (Feb 2, 2023)
-//https://github.com/LimelightVision/limelightlib-wpijava
+//LimelightHelpers v1.2.1 (March 1, 2023)
 
 package org.deceivers.drivers;
 
