@@ -34,7 +34,7 @@ public class ShooterPivotSubsystem extends SubsystemBase {
  // private final RelativeEncoder mShooterEncoder;
     private final SparkPIDController mPivotPID;
     private final SparkPIDController mShooterPID;
-private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(9, 3));
+private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(6, 4));
 private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
 private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
@@ -50,9 +50,10 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     m_alternateEncoder = mShooterPivot.getAlternateEncoder(kAltEncType, kCPR);
     m_alternateEncoder.setInverted(true);
     m_alternateEncoder.setPosition(0);
+
         // Configure drive motor controller parameters
         mPivotPID = mShooterPivot.getPIDController();
-        mPivotPID.setP(3);
+        mPivotPID.setP(6.5);
         mPivotPID.setI(0);
         mPivotPID.setD(0);
        // mPivotPID.setFF(0.1);
@@ -89,7 +90,6 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
          mShooter1.burnFlash();
        
           mShooterPID = mShooter1.getPIDController();
-
           mShooterPID.setSmartMotionMaxVelocity(6000, 0);
           mShooterPID.setSmartMotionMinOutputVelocity(-6000, 0);
           mShooterPID.setSmartMotionMaxAccel(1000, 0);
@@ -143,10 +143,38 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     }
 
     public void shooterShootStop() {
-        mShooter1.stopMotor();;
+        mShooter1.stopMotor();
+      }
+
+      public void doNothing(){
+
       }
 
     public boolean getSensor(){
       return(noteSensor.get());
     }
-}
+
+    public Command shooterAim(){
+      return this.startEnd(() -> setAngle(-0.11), () -> doNothing()).until(() -> pivotInPosition());
+    }
+    
+    public boolean pivotInPosition() {
+      return Math.abs(m_setpoint.position - m_goal.position) < 0.05;
+    }
+
+    // public Command prepShoot(){
+    //   return this.startEnd(() -> , () -> intake(-0.5)).until(() -> getSensor());
+    // }}
+
+    public Command shooterGo(){
+return this.runOnce(() ->shooterShoot(-4.1));   
+ }
+
+ public Command shooterindex(){
+return this.runOnce(() ->shooterIntake(1));   
+ }
+
+ public Command primeShooter(){
+    return this.startEnd(() -> shooterIntake(-0.4), () -> doNothing()).until(() -> !getSensor());
+  }
+ }

@@ -22,18 +22,15 @@ public class ShooterPivotCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ShooterPivotSubsystem m_subsystem;
   private final XboxController m_Controller;
-  private final Limelight mLimelight;
-    private PIDController autoShootPID = new PIDController(1.0,0,0);
 
   private int shootState = 1;
-  
   private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> hoodMap = new InterpolatingTreeMap<>();
   static {
     hoodMap.put(new InterpolatingDouble(7.0), new InterpolatingDouble(-.21));
-    hoodMap.put(new InterpolatingDouble(4.16), new InterpolatingDouble(-.2));
-    hoodMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.185));
+    hoodMap.put(new InterpolatingDouble(4.16), new InterpolatingDouble(-.195));
+    hoodMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.17));
     hoodMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(-0.163));
-    hoodMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.11)); 
+    hoodMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.1)); 
     hoodMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(-0.06));
   }
   /**
@@ -44,7 +41,6 @@ public class ShooterPivotCommand extends Command {
   public ShooterPivotCommand(ShooterPivotSubsystem subsystem, XboxController controller, Limelight limelight) {
     m_subsystem = subsystem;
     m_Controller = controller;
-    mLimelight = limelight;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -58,9 +54,13 @@ public class ShooterPivotCommand extends Command {
   public void execute() {
 
     if((m_Controller.getPOV() <= 315) && (m_Controller.getPOV() >= 225)){
-      m_subsystem.setAngle(-0.3); //-0.4
+      m_subsystem.setAngle(-0.31);
+      if(m_subsystem.getAngle() < -0.3){
+            m_subsystem.shooterIntake(1.0);
+            m_subsystem.shooterShoot(-1.0);
+      }
   } else if((m_Controller.getPOV() <= 135) && (m_Controller.getPOV() >= 45)){
-    m_subsystem.setAngle(-0.13); //-0.2
+    m_subsystem.setAngle(-0.11); //-0.2
     m_subsystem.shooterIntake(.4);
   }
   else if(m_Controller.getLeftBumper()){
@@ -93,11 +93,9 @@ public class ShooterPivotCommand extends Command {
   }
 
   if(m_Controller.getLeftTriggerAxis() > 0.1){
-    m_subsystem.shooterShoot(0.1);
-    
-  }else if(m_Controller.getRightTriggerAxis() > 0.1){
-
-   }
+    m_subsystem.shooterShoot(0.5);
+    m_subsystem.setAngle(-0.11);
+  }
 
    if(shootState == 1){
     if(m_Controller.getRightTriggerAxis() > 0.1){
@@ -122,13 +120,6 @@ public class ShooterPivotCommand extends Command {
         shootState = 1;
      }
    }
-   
-   // else{
-  //   m_subsystem.shooterShootStop();
-  //   if(m_subsystem.getSensor()){
-  //     m_subsystem.shooterIntake(-0.2);
-  //  }
-  // }
 
   if(m_Controller.getYButton()){
     m_subsystem.shooterIntake(0.5);

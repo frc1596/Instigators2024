@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -47,9 +49,9 @@ public class Robot extends TimedRobot {
   XboxController driverController = new XboxController(0);
   XboxController operaterController = new XboxController(1);
   private final Compressor mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
-  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1,0 );
   Limelight limelight = new Limelight();
-
+  
   LED led = new LED();
 
  // private final AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -61,18 +63,28 @@ public class Robot extends TimedRobot {
    */
   SendableChooser<Command> autoChooser = new SendableChooser<>();
   //private final SendableChooser<Command> autoChooser;
-private AddressableLED m_led;
-private AddressableLEDBuffer m_ledBuffer;
 
   @Override
   public void robotInit() {
-        autoChooser = AutoBuilder.buildAutoChooser();
-     UsbCamera camera = CameraServer.startAutomaticCapture();
+    NamedCommands.registerCommand("Intake", intake.intakeNote());
+    NamedCommands.registerCommand("Intake up", intake.intakeUp());
+    NamedCommands.registerCommand("Stop Intake", intake.stopthestupidinatkething());
+    NamedCommands.registerCommand("index", intake.putThatThingBackWhereItCameFromOrSoHelpMe());
+    NamedCommands.registerCommand("Intake Down", intake.intakeDown());
+
+    NamedCommands.registerCommand("shooterAim", shooter.shooterAim());
+    NamedCommands.registerCommand("shooterIntake", shooter.shooterindex());
+    NamedCommands.registerCommand("shooterShoot", shooter.shooterGo());
+    NamedCommands.registerCommand("shooterprime", shooter.primeShooter());
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    UsbCamera camera = CameraServer.startAutomaticCapture();
     camera.setResolution(160,120);
 
+
+  
     //camera.setFPS(24);
-   //new Compressor(null)
-   // swerve.setDefaultCommand(new DriveCommand(swerve, driverController));
   }
 
   /**
@@ -103,7 +115,7 @@ private AddressableLEDBuffer m_ledBuffer;
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putNumber("FID",  limelight.getFid());
+    //SmartDashboard.putNumber("FID",  limelight.getFid());
 
   }
 
@@ -132,6 +144,7 @@ private AddressableLEDBuffer m_ledBuffer;
     // continue until interrupted by another command, remove` 
     // this line or comment it out.
     led.isEnabled = true;
+    
    // led.setLEDOrange();
     m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     swerve.setDefaultCommand(new DriveCommand(swerve, driverController, operaterController,limelight));
@@ -145,22 +158,36 @@ private AddressableLEDBuffer m_ledBuffer;
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("FID",  limelight.getFid());
-
+    //SmartDashboard.putNumber("FID",  limelight.getFid());
+  //  if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 0.6)){
+          
+  //     m_doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+    
+  //   }
     if (driverController.getYButtonPressed()) {
       m_doubleSolenoid.toggle();
-   }
-  // if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 0.6)){
-  //    m_doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
-   //}
-   // SmartDashboard.putNumber("Angle", gyro.getAngle());
- 
+      led.climbTime = true;
+    } 
+    if(intake.getSensor()){
+      led.intakeNote = true;
+    } else if(led.flashDone == true){
+      led.intakeNote = false;
+      led.flashDone = false;
+    }
+
+    
+    // if (DriverStation.isTeleop() && (DriverStation.getMatchTime() < 40.0) && (DriverStation.getMatchTime() > 0.1)) {
+    //   mCompressor.enableDigital();
+    // } else {
+    //   mCompressor.disable();
+    // }
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    mCompressor.enableDigital();
   }
 
   /** This function is called periodically during test mode. */

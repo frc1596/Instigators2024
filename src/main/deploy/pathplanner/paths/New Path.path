@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2,
-        "y": 6.1
+        "x": 1.385354324682553,
+        "y": 5.570246205735591
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2516214345405796,
-        "y": 6.081750115205065
+        "x": 1.385354324682553,
+        "y": 5.589722591070332
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3007444354153246,
-        "y": 4.48
+        "x": 1.385354324682553,
+        "y": 5.570246205735591
       },
       "prevControl": {
-        "x": 1.8074591181210842,
-        "y": 4.55790554133896
+        "x": 1.4437834806867724,
+        "y": 5.55076982040085
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,30 +33,11 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.0,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake Down"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Stop Intake"
-              }
-            }
-          ]
+          "commands": []
         }
       }
     }
@@ -69,13 +50,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 146.7682889320208,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "close notes",
   "previewStartingState": {
-    "rotation": -145.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

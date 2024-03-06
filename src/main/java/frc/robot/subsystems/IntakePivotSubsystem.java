@@ -73,6 +73,10 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
         m_goal = new TrapezoidProfile.State(angle, 0);
     }
 
+    public void doNothing(){
+
+    }
+
     public void intake(double speed){
       mIntakeDrive.set(speed);
     }
@@ -80,4 +84,29 @@ private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
     public boolean getSensor(){
       return(noteSensor.get());
     }
+    
+
+    public Command intakeUp(){
+      return this.startEnd(() -> setAngle(2.0), () -> doNothing()).until(() -> pivotInPosition());
+    }
+
+    public Command intakeDown(){
+      return this.startEnd(() -> setAngle(75.8), () -> doNothing()).until(() -> pivotInPosition());
+    }
+
+    public boolean pivotInPosition() {
+      return Math.abs(m_setpoint.position - m_goal.position) < 5;
+    }
+    
+    public Command intakeNote(){
+      return this.startEnd(() -> intake(-0.4), () -> doNothing()).until(() -> getSensor());
+    }
+
+    public Command stopthestupidinatkething(){
+      return this.runOnce (() -> intake(0.0));
+    }
+
+     public Command putThatThingBackWhereItCameFromOrSoHelpMe(){
+      return this.runOnce (() -> intake(0.5));
+    }   
 }

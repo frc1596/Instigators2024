@@ -3,6 +3,7 @@ package frc.robot.commands;
 import org.deceivers.drivers.LimelightHelpers;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -20,20 +21,17 @@ public class DriveCommand extends Command {
     public XboxController mController2;
     public Limelight mLimelight;
 
-    private PIDController rotationController = new PIDController(0.4, .0, .0);
-
     private PIDController limController = new PIDController(0.3, 0.0, 0.0);
-
-    private PIDController autoAimController = new PIDController(1.0,0,0);
+    private PIDController autoAimController = new PIDController(0.007,0,0);
+    private LinearFilter aimFilter = LinearFilter.movingAverage(3);
 
     private JoystickHelper xHelper = new JoystickHelper(0);
-  private JoystickHelper yHelper = new JoystickHelper(0);
-  private JoystickHelper rotHelper = new JoystickHelper(0);
+    private JoystickHelper yHelper = new JoystickHelper(0);
+    private JoystickHelper rotHelper = new JoystickHelper(0);
 
     private SlewRateLimiter xfilter = new SlewRateLimiter(3);
     private SlewRateLimiter yfilter = new SlewRateLimiter(3);
 
-    private PIDController shooterAimPID = new PIDController(0.01, 0, 0);
 
     private boolean lastScan;
     private double driveFactor = 1;
@@ -44,10 +42,9 @@ public class DriveCommand extends Command {
         mController2 = XboxController2;
         mController = XboxController;
 
-        autoAimController.enableContinuousInput(-0.5, 0.5);
-
-        rotationController.enableContinuousInput(-Math.PI, Math.PI);
+        autoAimController.enableContinuousInput(-360, 360);
         limController.enableContinuousInput(-Math.PI, Math.PI);
+
         addRequirements(mSwerve);
       }
        // Called when the command is initially scheduled.
@@ -73,9 +70,6 @@ public class DriveCommand extends Command {
     yVel = Math.sin(driveDirection) * driveMagnitude;
     xVel = Math.cos(driveDirection) * driveMagnitude;
 
-    //yrVel = mController.getRightY();
-    //xrVel = mController.getRightX();
-
     // slow down when right bumper
     if (mController.getRightBumper()) {
       driveFactor = 0.5;
@@ -96,27 +90,18 @@ public class DriveCommand extends Command {
     xVel = xHelper.setInput(xVel).applyPower(2).value;
     rotVel = rotHelper.setInput(rotVel).applyPower(2).value;
 
-    //yrVel = yrHelper.setInput(yrVel).applyPower(yrVel).value;
-    //xrVel = xrHelper.setInput(xrVel).applyPower(yrVel).value;
-
     yVel = yVel * driveFactor;
     xVel = xVel * driveFactor;
     rotVel = rotVel * driveFactor;
 
-    //Rotation2d joystickAngle = Rotation2d.fromRadians(Math.atan2(-mController.getRightX(), -mController.getRightY()));
-    //if (!mController.getLeftBumper()) {
-    //  joystickAngle = joystickAngle.plus(Rotation2d.fromDegrees(180));
-    //}
-    SmartDashboard.putNumber("FieldOrientation", mLimelight.getPose().getRotation().getRotations());
+    SmartDashboard.putNumber("Tx", LimelightHelpers.getTX("limelight"));
 
-    double joystickMagnitude = Math.sqrt(
-        (mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
+    double joystickMagnitude = Math.sqrt((mController.getRightY() * mController.getRightY()) + (mController.getRightX() * mController.getRightX()));
   
     if(mController2.getLeftBumper() && !(mLimelight.getFid() == -1)){
-      if((mLimelight.getFid() == 3) || (mLimelight.getFid() == 4)){
-      //  rotVel = -autoAimController.calculate(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle()-Math.toRadians(mSwerve.getRotation()), 0);
-      //  SmartDashboard.putNumber("RotVel",rotVel);
-      //  SmartDashboard.putNumber("LimelightRotation",LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle());
+      if(mLimelight.getFid() == 4 || (mLimelight.getFid() == 7)){
+
+        rotVel = -autoAimController.calculate(aimFilter.calculate(LimelightHelpers.getTX("limelight")),0);
       }
     }
     else if (joystickMagnitude > .04) {
@@ -135,9 +120,6 @@ public class DriveCommand extends Command {
       mSwerve.resetGyro();
     }
     lastScan = mController.getRawButton(7);
-
-    SmartDashboard.putNumber("Commanded xVel", xVel);
-        SmartDashboard.putNumber("Commanded yVel", yVel);
 
     boolean fieldRelative = !mController.getAButton();
 //ChassisSpeeds regularDrive = ChassisSpeeds.fromFieldRelativeSpeeds(xrVel, yrVel, joystickMagnitude, joystickAngle);

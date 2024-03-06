@@ -153,7 +153,7 @@ public class SwerveDrive {
         for (int i = 0; i < numModules; i++) {
             states[i] = mModules[i].getPosition();
         }
-        mSwerveDrivePoseEstimator.resetPosition(spin.getRotation(), states, spin);
+        mSwerveDrivePoseEstimator.resetPosition(Rotation2d.fromDegrees(mGyroAngle.getAsDouble()), states, spin);
     }
     
     public void driveClosedLoop(double forward, double strafe, double azimuth, boolean fieldRelative){

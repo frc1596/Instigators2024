@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2,
-        "y": 6.1
+        "x": 2.75,
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2516214345405796,
-        "y": 6.081750115205065
+        "x": 1.7500000000000004,
+        "y": 5.5
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3007444354153246,
-        "y": 4.48
+        "x": 1.45,
+        "y": 5.5
       },
       "prevControl": {
-        "x": 1.8074591181210842,
-        "y": 4.55790554133896
+        "x": 2.45,
+        "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,11 +29,33 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0.9,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [
     {
+      "name": "do the rest",
+      "waypointRelativePos": 0.2,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.9,
       "command": {
         "type": "sequential",
         "data": {
@@ -41,19 +63,24 @@
             {
               "type": "named",
               "data": {
-                "name": "Intake Down"
+                "name": "index"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Intake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Stop Intake"
+                "name": "Intake up"
               }
             }
           ]
@@ -69,13 +96,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 146.7682889320208,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "close notes",
   "previewStartingState": {
-    "rotation": -145.0,
+    "rotation": -0.02871180063531217,
     "velocity": 0
   },
   "useDefaultConstraints": true

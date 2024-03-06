@@ -8,6 +8,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakePivotSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /** An example command that uses an example subsystem. */
 public class IntakePivotCommand extends Command {
@@ -39,9 +40,9 @@ public class IntakePivotCommand extends Command {
         
     } else if((m_Controller.getAButton()) && (m_subsystem.getSensor())) {
         m_subsystem.intake(-0.5);
-        m_subsystem.setAngle(2.5);
+        m_subsystem.setAngle(1.8);
     }else{
-        m_subsystem.setAngle(2.5);
+        m_subsystem.setAngle(1.8);
         m_subsystem.intake(0.0);
     }
 
@@ -61,4 +62,5 @@ public class IntakePivotCommand extends Command {
   public boolean isFinished() {
     return false;
   }
+  
 }

@@ -8,12 +8,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "middle note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "middle to left note"
           }
         },
